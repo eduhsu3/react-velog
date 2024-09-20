@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import TrendList from './TrendList';
 import FeedList from './FeedList';
 import LatestList from './LatestList';
-//import { postData } from '../data/DUMMY_DATA';
+import { postData } from '../data/DUMMY_DATA';
 import CreateForm from './CreateForm';
 
 function Main({ dataType, setDataType, schKeyword, isWrite, setIsWrite }) {
   const [originData, setOriginData] = useState({
-    trending: [],
-    latest: [],
-    feed: [],
+    trending: postData.trending,
+    latest: postData.latest,
+    feed: postData.feed,
   });
   const dataArr = originData[dataType];
 
@@ -20,18 +20,24 @@ function Main({ dataType, setDataType, schKeyword, isWrite, setIsWrite }) {
       return dataArr;
     }
   };
-
   const filteredArr = filtedSearch();
+
+  //데이터 삭제후 다시 리빌드
+  const removeHandler = (prmId) => {
+    const removedDataArr = dataArr.filter((item) => item.id !== prmId);
+    const copyObj = { ...originData, [dataType]: removedDataArr };
+    setOriginData(copyObj);
+  };
 
   const selectComponent = () => {
     if (!isWrite) {
       switch (dataType) {
         case 'trending':
-          return <TrendList dataType={dataType} dataArr={filteredArr} />;
+          return <TrendList dataType={dataType} dataArr={filteredArr} removeHandler={removeHandler} />;
         case 'feed':
-          return <FeedList dataType={dataType} dataArr={filteredArr} />;
+          return <FeedList dataType={dataType} dataArr={filteredArr} removeHandler={removeHandler} />;
         case 'latest':
-          return <LatestList dataType={dataType} dataArr={filteredArr} />;
+          return <LatestList dataType={dataType} dataArr={filteredArr} removeHandler={removeHandler} />;
         default:
           return (
             <div>

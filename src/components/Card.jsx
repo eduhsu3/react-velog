@@ -1,12 +1,6 @@
-import React, { useRef } from 'react';
 import styles from './Card.module.css';
 
-function Card({ item }) {
-  /* const postDate = new Date(item.createdAt);
-  const year = postDate.getFullYear();
-  const month = String(postDate.getMonth() + 1).padStart(2, '0');
-  const day = String(postDate.getDate()).padStart(2, '0'); */
-
+function Card({ item, modalOpenHandler, removeHandler }) {
   function timeAgo(postDate) {
     const now = new Date(); // 현재 시간
     const diff = now - new Date(postDate); // 현재 시간과 게시 시간의 차이 (밀리초 단위)
@@ -34,21 +28,9 @@ function Card({ item }) {
     return `${years}년 전`;
   }
 
-  /* ================================ */
-
-  const modalRef = useRef();
-
-  const openDialog = () => {
-    modalRef.current.showModal(); // 다이얼로그 열기
-  };
-
-  const closeDialog = () => {
-    modalRef.current.close(); // 다이얼로그 닫기
-  };
-
   return (
     <li>
-      <div className={styles.card} onClick={openDialog}>
+      <div className={styles.card} onClick={() => modalOpenHandler(item)}>
         <div className={styles['photo-wrap']}>
           <img src={item.image} alt={item.title} />
         </div>
@@ -76,45 +58,16 @@ function Card({ item }) {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* ========================= */}
-
-      <dialog ref={modalRef} className="card-dialog">
-        <button autoFocus onClick={closeDialog}>
-          Close
+        <button
+          className="post-delete"
+          onClick={(e) => {
+            e.stopPropagation();
+            removeHandler(item.id);
+          }}
+        >
+          삭제
         </button>
-
-        <div className={styles.card}>
-          <div className={styles['photo-wrap']}>
-            <img src={item.image} alt={item.title} />
-          </div>
-          <div className={styles['top-info']}>
-            <p className={styles['title']}>{item.title}</p>
-            <p className={styles['s-text']}>{item.content}</p>
-            <p className={styles['day-info']}>
-              <span>{timeAgo(item.createdAt)}</span> &middot; <span>{item.comments}개의 댓글</span>
-            </p>
-          </div>
-
-          <div className={styles['bottom-info']}>
-            <div className={styles['l-ele']}>
-              <div className={styles['p-photo']}>
-                <img src={item.userImage} alt={item.author} />
-              </div>
-              <span>by</span>
-              <span className={styles['nickname']}>{item.author}</span>
-            </div>
-
-            <div className={styles['r-ele']}>
-              <button className={styles['like-btn']}>
-                <span>♥</span>
-                <span>{item.likes}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </dialog>
+      </div>
     </li>
   );
 }

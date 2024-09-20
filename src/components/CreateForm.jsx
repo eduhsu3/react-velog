@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import CreateModal from './CreateModal';
 
 function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
   const cateRef = useRef();
@@ -8,7 +9,27 @@ function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
   const contentRef = useRef();
   const thumbUrlRef = useRef();
 
-  function clickSubmitHandler() {
+  const childCreateModalRef = useRef();
+
+  //====벨리데이션
+  function validationHandler() {
+    //const cateValue = cateRef.current.value;
+    const titleValue = titleRef.current.value;
+    const authorValue = authorRef.current.value;
+    const userImageUrlValue = userImageUrlRef.current.value;
+    const contentValue = contentRef.current.value;
+    const thumbUrlValue = thumbUrlRef.current.value;
+
+    if (titleValue.trim() === '' || authorValue.trim() === '' || userImageUrlValue.trim() === '' || contentValue.trim() === '' || thumbUrlValue.trim() === '') {
+      alert('내용을 입력해주세요');
+      return false;
+    }
+
+    openCreateModalHandler();
+  }
+
+  //====저장실행
+  function submitHandler() {
     const cateValue = cateRef.current.value;
     /* -------------- */
     const idValue = Date.now(); //타임스템프 밀리세컨드값   1694593530123
@@ -33,14 +54,28 @@ function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
       content: contentValue,
       image: thumbUrlValue,
     };
-    console.log(cateValue);
-    console.log(creatNewData);
 
     setOriginData((prev) => {
       return { ...prev, [cateValue]: [...prev[cateValue], creatNewData] };
     });
+
     setDataType(cateValue); // 리빌드 될때 해당 카테고리 위치로 다시 목록이 열리게 해준다.
     setIsWrite(false);
+  }
+
+  //====모달창 제어
+  function openCreateModalHandler() {
+    childCreateModalRef.current.showModal();
+  }
+  //모달에서 취소
+  function cancelCreateModalHandler() {
+    childCreateModalRef.current.close();
+    return null;
+  }
+  //모달에서 확인 및 저장
+  function acceptCreateModalHandler() {
+    childCreateModalRef.current.close();
+    submitHandler();
   }
 
   return (
@@ -75,10 +110,11 @@ function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
         <input type="text" id="iptImage" ref={thumbUrlRef} />
       </div>
       <div className="bottom-btn">
-        <button type="button" className="btn-write btn-blue" onClick={clickSubmitHandler}>
+        <button type="button" className="btn-write btn-blue" onClick={validationHandler}>
           글등록 하기
         </button>
       </div>
+      <CreateModal ref={childCreateModalRef} cancelCreateModalHandler={cancelCreateModalHandler} acceptCreateModalHandler={acceptCreateModalHandler} />
     </div>
   );
 }
