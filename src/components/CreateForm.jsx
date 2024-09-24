@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import CreateModal from './CreateModal';
+import { saveLocalHandler } from '../localStorageHandler';
 
-function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
+function CreateForm({ originData, setOriginData, dataType, setDataType, setIsWrite }) {
   const cateRef = useRef();
   const titleRef = useRef();
   const authorRef = useRef();
@@ -55,9 +56,9 @@ function CreateForm({ setOriginData, dataType, setDataType, setIsWrite }) {
       image: thumbUrlValue,
     };
 
-    setOriginData((prev) => {
-      return { ...prev, [cateValue]: [...prev[cateValue], creatNewData] };
-    });
+    //console.log({ ...originData, [cateValue]: [...originData[cateValue], creatNewData] });
+    setOriginData({ ...originData, [cateValue]: [...originData[cateValue], creatNewData] });
+    saveLocalHandler({ ...originData, [cateValue]: [...originData[cateValue], creatNewData] });
 
     setDataType(cateValue); // 리빌드 될때 해당 카테고리 위치로 다시 목록이 열리게 해준다.
     setIsWrite(false);

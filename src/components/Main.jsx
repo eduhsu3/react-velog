@@ -4,29 +4,33 @@ import FeedList from './FeedList';
 import LatestList from './LatestList';
 import { postData } from '../data/DUMMY_DATA';
 import CreateForm from './CreateForm';
+import { loadLocalHandler, saveLocalHandler } from '../localStorageHandler';
 
 function Main({ dataType, setDataType, schKeyword, isWrite, setIsWrite }) {
-  const [originData, setOriginData] = useState({
+  /* const [originData, setOriginData] = useState({
     trending: postData.trending,
     latest: postData.latest,
     feed: postData.feed,
-  });
+  }); */
+  const [originData, setOriginData] = useState(loadLocalHandler);
+
   const dataArr = originData[dataType];
 
-  const filtedSearch = () => {
+  const filteredSearch = () => {
     if (schKeyword !== null) {
       return dataArr.filter((item) => item.title.toLowerCase().includes(schKeyword.toLowerCase()));
     } else {
       return dataArr;
     }
   };
-  const filteredArr = filtedSearch();
+  const filteredArr = filteredSearch();
 
   //데이터 삭제후 다시 리빌드
   const removeHandler = (prmId) => {
     const removedDataArr = dataArr.filter((item) => item.id !== prmId);
-    const copyObj = { ...originData, [dataType]: removedDataArr };
-    setOriginData(copyObj);
+    const updateObj = { ...originData, [dataType]: removedDataArr };
+    setOriginData(updateObj);
+    saveLocalHandler(updateObj);
   };
 
   const selectComponent = () => {
@@ -46,7 +50,7 @@ function Main({ dataType, setDataType, schKeyword, isWrite, setIsWrite }) {
           );
       }
     } else {
-      return <CreateForm setOriginData={setOriginData} dataType={dataType} setDataType={setDataType} setIsWrite={setIsWrite} />;
+      return <CreateForm originData={originData} setOriginData={setOriginData} dataType={dataType} setDataType={setDataType} setIsWrite={setIsWrite} />;
     }
   };
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Weather from './Weather';
 
 function Header({ setDataType, dataType, setSchKeyword, isWrite, setIsWrite }) {
   const [schIpt, setSchIpt] = useState('');
@@ -16,13 +17,18 @@ function Header({ setDataType, dataType, setSchKeyword, isWrite, setIsWrite }) {
         <h1 className="logo">Velog</h1>
 
         {isWrite ? null : (
-          <div className="topSch">
-            <input type="text" id="iptSearch" value={schIpt} onChange={changeHandler} />
-          </div>
+          <>
+            <div className="topSch">
+              <input type="text" id="iptSearch" value={schIpt} onChange={changeHandler} />
+            </div>
+          </>
         )}
 
         <div className="util">
           {/* <button>로그인</button> */}
+
+          <Weather />
+
           <button
             onClick={() => {
               setIsWrite((prev) => !prev);
@@ -32,6 +38,7 @@ function Header({ setDataType, dataType, setSchKeyword, isWrite, setIsWrite }) {
           </button>
         </div>
       </div>
+
       {isWrite ? null : (
         <div className="row-bottom">
           <nav className="tab-btn">
@@ -46,12 +53,12 @@ function Header({ setDataType, dataType, setSchKeyword, isWrite, setIsWrite }) {
             </button>
           </nav>
 
-          <div className="util">
+          {/* <div className="util">
             <select className="sortSec">
               <option value="week">이번주</option>
               <option value="month">이번달</option>
             </select>
-          </div>
+          </div> */}
         </div>
       )}
     </header>
